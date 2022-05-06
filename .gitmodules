@@ -1,0 +1,3 @@
+[submodule "rip"]
+	path = rip
+	url = https://github.com/nivekuil/rip
