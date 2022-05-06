@@ -2,7 +2,7 @@
 
 This is the repository for the unraid rip plugin.
 
-<img src="https://git.panaetius.co.uk/dtomlinson91/unraid-rip/raw/branch/master/assets/unraid-rip.png"/>
+<img src="https://git.panaetius.co.uk/dtomlinson91/unraid-rip/raw/branch/main/assets/unraid-rip.png"/>
 
 rip is a command-line deletion tool focused on safety, ergonomics, and performance. It favors a simple interface, and does not implement the xdg-trash spec or attempt to achieve the same goals.
 
