@@ -1,0 +1,73 @@
+<?xml version='1.0' standalone='yes'?>
+<!DOCTYPE PLUGIN [
+  <!ENTITY name       "unraid-rip">
+  <!ENTITY author     "dtomlinson">
+  <!ENTITY org        "dtomlinson91">
+  <!ENTITY version    "v0.13.1">
+  <!ENTITY gitURL     "https://git.panaetius.co.uk/&org;/&name;">
+  <!ENTITY pluginURL  "&gitURL;/raw/branch/master/&name;.plg">
+  <!ENTITY releaseURL "&gitURL;/releases/download/&version;/&name;-&version;.txz">
+  <!ENTITY md5        "b49a912a3702d5704b6cecfcd8564d33">
+  <!ENTITY plugin     "/boot/config/plugins/&name;">
+  <!ENTITY emhttp     "/usr/local/emhttp/plugins/&name;">
+]>
+
+<PLUGIN  name="&name;" author="&author;" version="&version;" pluginURL="&pluginURL;" min="6.8.3">
+
+<CHANGES>
+
+### 2022-05-06
+
+- Initial release - rip v0.13.1
+
+</CHANGES>
+
+<FILE Run="/bin/bash">
+<INLINE>
+<!-- remove previous version if present -->
+file=$(/usr/bin/ls /boot/config/plugins/&name;/&name;*.txz | grep -v '&version;')
+if [ ! -z "$file" ]
+then
+  filename=$(basename -- $file)
+  previous="${filename%.*}"
+  echo "previous version ${previous} found - uninstalling"
+  removepkg $previous
+  rm -f $file
+else
+  echo "no previous version found - first time install"
+fi
+</INLINE>
+</FILE>
+
+<FILE Name="/boot/config/plugins/&name;/&name;-&version;.txz" Run="upgradepkg --install-new">
+<URL>&releaseURL;</URL>
+<MD5>&md5;</MD5>
+</FILE>
+
+<FILE Name="&emhttp;/README.md">
+<INLINE>
+**rip**
+
+rip is a command-line deletion tool focused on safety, ergonomics, and performance. It favors a simple interface, and does not implement the xdg-trash spec or attempt to achieve the same goals.
+
+Deleted files get sent to the graveyard (`/tmp/graveyard-$USER` by default, see notes on changing this) under their absolute path, giving you a chance to recover them. No data is overwritten. If files that share the same path are deleted, they will be renamed as numbered backups.
+
+For more information see the [rip repository](https://github.com/nivekuil/rip).
+</INLINE>
+</FILE>
+
+<FILE Run="/bin/bash" Method="remove">
+<INLINE>
+echo "*** Removing rip ***"
+
+# Remove plugin related files
+removepkg &name;-&version;
+
+rm -rf &emhttp;
+rm -rf &plugin;
+
+echo
+echo "*** Successfully removed rip ***"
+</INLINE>
+</FILE>
+</PLUGIN>
