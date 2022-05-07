@@ -7,7 +7,7 @@
   <!ENTITY gitURL     "https://git.panaetius.co.uk/&org;/&name;">
   <!ENTITY pluginURL  "&gitURL;/raw/branch/master/&name;.plg">
   <!ENTITY releaseURL "&gitURL;/releases/download/&version;/&name;-&version;.txz">
-  <!ENTITY md5        "2a6dde372dcf6c3a74bfa1c11d22875f">
+  <!ENTITY releaseMD5URL "&gitURL;/releases/download/&version;/md5sum.txt">
   <!ENTITY plugin     "/boot/config/plugins/&name;">
   <!ENTITY emhttp     "/usr/local/emhttp/plugins/&name;">
 ]>
@@ -22,26 +22,52 @@
 
 </CHANGES>
 
+<FILE Name="&plugin;/&name;-&version;.txz">
+<URL>&releaseURL;</URL>
+</FILE>
+
+<FILE Name="&plugin;/&name;-&version;.md5">
+<URL>&releaseMD5URL;</URL>
+</FILE>
+
 <FILE Run="/bin/bash">
 <INLINE>
-<!-- remove previous version if present -->
-file=$(/usr/bin/ls /boot/config/plugins/&name;/&name;*.txz | grep -v '&version;')
-if [ ! -z "$file" ]
+local_package_file_md5=$(/usr/bin/md5sum &plugin;/&name;-&version;.txz)
+remote_package_file_md5=$(/usr/bin/cat &name;-&version;.md5)
+
+if test $local_package_file_md5 != remote_package_file_md5
 then
-  filename=$(basename -- $file)
-  previous="${filename%.*}"
-  echo "previous version ${previous} found - uninstalling"
-  removepkg $previous
-  rm -f $file
+    echo "*** md5 of download package does not match - removing files and exiting ***"
+    rm &plugin;/&name;-&version;.txz
+    rm &name;-&version;.md5
+    exit 1
 else
-  echo "no previous version found - first time install"
+    echo "*** md5 check successful ***"
 fi
 </INLINE>
 </FILE>
 
-<FILE Name="/boot/config/plugins/&name;/&name;-&version;.txz" Run="upgradepkg --install-new">
-<URL>&releaseURL;</URL>
-<MD5>&md5;</MD5>
+<FILE Run="/bin/bash">
+<INLINE>
+    <!-- remove previous version if present -->
+    file=$(/usr/bin/ls /boot/config/plugins/&name;/&name;*.txz | grep -v '&version;')
+    if [ ! -z "$file" ]
+    then
+    filename=$(basename -- $file)
+    previous="${filename%.*}"
+    echo "*** previous version ${previous} found - uninstalling ***"
+    removepkg $previous
+    rm -f $file
+    else
+    echo "*** no previous version found - first time install ***"
+    fi
+</INLINE>
+</FILE>
+
+<FILE Run="/bin/bash">
+<INLINE>
+upgradepkg --install-new &plugin;/&name;-&version;.txz
+</INLINE>
 </FILE>
 
 <FILE Name="&emhttp;/README.md">
