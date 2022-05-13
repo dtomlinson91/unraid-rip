@@ -5,7 +5,7 @@
   <!ENTITY org        "dtomlinson91">
   <!ENTITY version    "0.13.1">
   <!ENTITY gitURL     "https://github.com/&org;/&name;">
-  <!ENTITY pluginURL  "&gitURL;/raw/master/&name;.plg">
+  <!ENTITY pluginURL  "&gitURL;/raw/main/&name;.plg">
   <!ENTITY releaseURL "&gitURL;/releases/download/&version;/&name;-&version;.txz">
   <!ENTITY releaseMD5URL "&gitURL;/releases/download/&version;/md5sum.txt">
   <!ENTITY plugin     "/boot/config/plugins/&name;">
