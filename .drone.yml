@@ -69,7 +69,7 @@ steps:
     depends_on:
       - "prepare release"
   - name: publish github release
-    image: plugins/github-release
+    image: plugins/github-release@sha256:24f5fb388173c0ec211d1c73d2c4441efd3cd24d0ba9eea148b98c40d03807ff
     settings:
       api_key:
         from_secret: GITHUB_KEY
